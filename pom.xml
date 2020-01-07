@@ -7,25 +7,21 @@
     <groupId>com.vtrishin.webservice</groupId>
     <artifactId>com-vtrishin-webservice</artifactId>
     <version>1.0-SNAPSHOT</version>
+<!--    <packaging>war</packaging>-->
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
                     <port>9000</port>
-                    <path>/spring5-webmvc-demo</path>
 <!--                    address – This IP address will be used on all ports-->
 <!--                    contextFile – The path of the Tomcat context XML file.-->
 <!--                    hostName – configure host name-->
@@ -42,12 +38,8 @@
         </plugins>
     </build>
 
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-
     <dependencies>
+<!--        TESTS-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -61,6 +53,7 @@
             <scope>test</scope>
         </dependency>
 
+<!--        SQL-->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
@@ -70,7 +63,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>RELEASE</version>
+            <version>42.2.9</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

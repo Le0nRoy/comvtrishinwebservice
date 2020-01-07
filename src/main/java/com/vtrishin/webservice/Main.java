@@ -47,7 +47,8 @@ import java.util.Locale;
 //        REST API данного сервиса должно быть задокументировано
 
 public class Main {
-    public static void main( String[] args ) {
+    public static void main(String[] args) {
+        // 1.1 Организовать работу в tomcat-е
         // 2. Создать класс для пользователя
         // 2.1. Добавить команду для возврата информации о пользователе по ид
         // 2.2. Добавить простую проверку логина/пароля для пользователя

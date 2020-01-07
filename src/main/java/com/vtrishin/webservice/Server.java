@@ -6,9 +6,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.logging.Logger;
@@ -26,6 +24,11 @@ public class Server {
     }
 
     // TODO create database
+    // 1. Connect to server
+    // 2. Get user information
+    // 2.1. Using user information get advertisment information and list of all adverts
+    // 2.2. Add advertisments to user
+    // 3. Add new user
 
     private Logger logger = Logger.getLogger(Server.class.getName());
 
