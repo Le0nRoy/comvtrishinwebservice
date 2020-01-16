@@ -1,4 +1,4 @@
-package com.vtrishin.webservice;
+package com.vtrishin.webservice.service;
 
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
@@ -13,13 +13,15 @@ import java.util.logging.Logger;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 
-public class Server {
+public class Servlet {
 
-    Server() {
+    Servlet() {
+
         context.setHandler(this::handleHttpRequest);
     }
 
     void startServer() {
+
         server.start();
     }
 
@@ -30,7 +32,7 @@ public class Server {
     // 2.2. Add advertisments to user
     // 3. Add new user
 
-    private Logger logger = Logger.getLogger(Server.class.getName());
+    private Logger logger = Logger.getLogger(Servlet.class.getName());
 
     private String hostAddress = "localhost";
     private String contextAddress = "/";

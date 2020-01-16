@@ -25,11 +25,11 @@
 <!--                    address – This IP address will be used on all ports-->
 <!--                    contextFile – The path of the Tomcat context XML file.-->
 <!--                    hostName – configure host name-->
-<!--                    httpsPort – The https port to run the Tomcat server on.-->
+<!--                    httpsPort – The https port to run the Tomcat servlet on.-->
 <!--                    keystoreFile – Override the default keystoreFile for the HTTPS connector (if enabled)-->
 <!--                    keystorePass – Override the default keystorePass for the HTTPS connector (if enabled)-->
 <!--                    mainClass – Main class to use for starting the standalone jar.-->
-<!--                    systemProperties – List of System properties to pass to the Tomcat Server.-->
+<!--                    systemProperties – List of System properties to pass to the Tomcat Servlet.-->
 <!--                    port – Custom port number-->
 <!--                    path – The webapp context path to use for the web application-->
 <!--                    warFile – The path of the WAR file to deploy.-->
