@@ -3,11 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+<!--    E:\Java_Workspace\comvtrishinwebservice\target-->
 
     <groupId>com.vtrishin.webservice</groupId>
     <artifactId>com-vtrishin-webservice</artifactId>
     <version>1.0-SNAPSHOT</version>
-<!--    <packaging>war</packaging>-->
+    <packaging>war</packaging>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -17,24 +18,31 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <port>9000</port>
-<!--                    address – This IP address will be used on all ports-->
-<!--                    contextFile – The path of the Tomcat context XML file.-->
-<!--                    hostName – configure host name-->
-<!--                    httpsPort – The https port to run the Tomcat servlet on.-->
-<!--                    keystoreFile – Override the default keystoreFile for the HTTPS connector (if enabled)-->
-<!--                    keystorePass – Override the default keystorePass for the HTTPS connector (if enabled)-->
-<!--                    mainClass – Main class to use for starting the standalone jar.-->
-<!--                    systemProperties – List of System properties to pass to the Tomcat Servlet.-->
-<!--                    port – Custom port number-->
-<!--                    path – The webapp context path to use for the web application-->
-<!--                    warFile – The path of the WAR file to deploy.-->
+<!--                    <webXml>src\main\webapp\WEB-INF\web.xml</webXml>-->
                 </configuration>
             </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.tomcat.maven</groupId>-->
+<!--                <artifactId>tomcat7-maven-plugin</artifactId>-->
+<!--                <version>2.2</version>-->
+<!--                <configuration>-->
+<!--                    <port>9000</port>-->
+<!--&lt;!&ndash;                    address – This IP address will be used on all ports&ndash;&gt;-->
+<!--&lt;!&ndash;                    contextFile – The path of the Tomcat context XML file.&ndash;&gt;-->
+<!--&lt;!&ndash;                    hostName – configure host name&ndash;&gt;-->
+<!--&lt;!&ndash;                    httpsPort – The https port to run the Tomcat servlet on.&ndash;&gt;-->
+<!--&lt;!&ndash;                    keystoreFile – Override the default keystoreFile for the HTTPS connector (if enabled)&ndash;&gt;-->
+<!--&lt;!&ndash;                    keystorePass – Override the default keystorePass for the HTTPS connector (if enabled)&ndash;&gt;-->
+<!--&lt;!&ndash;                    mainClass – Main class to use for starting the standalone jar.&ndash;&gt;-->
+<!--&lt;!&ndash;                    systemProperties – List of System properties to pass to the Tomcat Servlet.&ndash;&gt;-->
+<!--&lt;!&ndash;                    port – Custom port number&ndash;&gt;-->
+<!--&lt;!&ndash;                    path – The webapp context path to use for the web application&ndash;&gt;-->
+<!--&lt;!&ndash;                    warFile – The path of the WAR file to deploy.&ndash;&gt;-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
@@ -65,6 +73,22 @@
             <artifactId>postgresql</artifactId>
             <version>42.2.9</version>
             <scope>compile</scope>
+        </dependency>
+
+<!--        Servlet-->
+        <!-- Servlet API 4.0 for tomcat 9 -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- JavaServer Pages API 2.3 for tomcat 9 -->
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <version>2.3.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

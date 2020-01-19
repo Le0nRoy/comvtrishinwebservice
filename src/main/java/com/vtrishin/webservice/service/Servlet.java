@@ -4,8 +4,13 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,77 +18,37 @@ import java.util.logging.Logger;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 
-public class Servlet {
+public class Servlet extends HttpServlet {
 
-    Servlet() {
+    public String getGreeting() {
 
-        context.setHandler(this::handleHttpRequest);
+        return "Hello Tomcat! Now I'm in game!";
     }
 
-    void startServer() {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        /// Just for future (or for lulz)
+//        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/add.jsp");
+//        requestDispatcher.forward(req, resp);
 
-        server.start();
+
+        PrintWriter out = resp.getWriter();
+        out.println(this.getGreeting());
+
+        String requestURI = req.getRequestURI();
+        int index = requestURI.indexOf('/');
+        index = requestURI.indexOf('/', index);
+        out.println(index);
+        requestURI = requestURI.substring(index);
+//        requestURI = req.getRemoteUser();
+
+        out.println(requestURI);
+        out.close();
     }
 
-    // TODO create database
-    // 1. Connect to server
-    // 2. Get user information
-    // 2.1. Using user information get advertisment information and list of all adverts
-    // 2.2. Add advertisments to user
-    // 3. Add new user
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-    private Logger logger = Logger.getLogger(Servlet.class.getName());
-
-    private String hostAddress = "localhost";
-    private String contextAddress = "/";
-    private int port = 9000;
-    private int backlog = 0;
-
-    void handleHttpRequest(HttpExchange exchange) throws IOException {
-        switch (exchange.getRequestURI().toString()) {
-            case "/hello":
-                String response = "Hello!";
-                OutputStream os = exchange.getResponseBody();
-                exchange.sendResponseHeaders(HTTP_OK, response.getBytes().length);
-                os.write(response.getBytes());
-                os.close();
-                break;
-            case "":
-                break;
-            default:
-                break;
-        }
+        PrintWriter out = resp.getWriter();
+        out.println(this.getGreeting() + "Here we have post method!");
+        out.close();
     }
-
-    // FIXME: Logger
-    private HttpServer server = createServer();
-    private HttpServer createServer() {
-        try {
-            InetSocketAddress socketAddress = new InetSocketAddress(hostAddress, port);
-            return HttpServer.create(socketAddress, backlog);
-        } catch (Exception e) {
-            logger.info("ERROR: Unsuccesfull creation of HTTP server!\n" + e.getMessage());
-            System.exit(-127);
-        }
-        return null;
-    }
-    private HttpContext context = server.createContext(contextAddress);
-
-
-    Connection databaseConnection = createDatabaseConnection();
-    private Connection createDatabaseConnection() {
-        try {
-            Class.forName("org.postgresql.Driver");
-            Connection connection = DriverManager
-                    .getConnection("jdbc:postgresql:/E:/Java_Workspace/comvtrishinwebservicedb/DataBase/",
-                            "postgres", "123");
-            return connection;
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.info(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-        return null;
-    }
-
 }
