@@ -1,12 +1,11 @@
 package com.vtrishin.webservice.repositories;
 
 import com.vtrishin.webservice.models.BaseModel;
-import com.vtrishin.webservice.models.User;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class DatabaseUser extends BaseTable implements TableOperations {
+public class DatabaseUser extends BaseTable {
 
     public DatabaseUser() throws SQLException {
 
@@ -56,7 +55,7 @@ public class DatabaseUser extends BaseTable implements TableOperations {
         return true;
     }
     @Override
-    public BaseModel find(long id) throws SQLException {
+    public BaseModel find(long id, long userId) throws SQLException {
 
 //        String message;
 //        if (id > BaseModel.getMaxId()) {
@@ -106,7 +105,7 @@ public class DatabaseUser extends BaseTable implements TableOperations {
     }
 
     @Override
-    protected void createTable() throws SQLException {
+    public void createTable() throws SQLException {
 
         // TODO may move it to BaseTable and set commands as strings in classes (will be read from BaseModel)
 //        try {

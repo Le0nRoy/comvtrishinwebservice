@@ -1,12 +1,11 @@
 package com.vtrishin.webservice.repositories;
 
 import com.vtrishin.webservice.models.BaseModel;
-import com.vtrishin.webservice.models.Advert;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public final class DatabaseAdvert extends BaseTable implements TableOperations {
+public final class DatabaseAdvert extends BaseTable {
 
     public DatabaseAdvert() throws SQLException {
 
@@ -56,7 +55,7 @@ public final class DatabaseAdvert extends BaseTable implements TableOperations {
         return true;
     }
     @Override
-    public BaseModel find(long id) throws SQLException {
+    public BaseModel find(long id, long userId) throws SQLException {
 
 //        String message;
 //        if (id > BaseModel.getMaxId()) {
@@ -104,7 +103,7 @@ public final class DatabaseAdvert extends BaseTable implements TableOperations {
         return null;
     }
     @Override
-    protected void createTable() throws SQLException {
+    public void createTable() throws SQLException {
 
 //        try {
 //            super.executeSqlStatement("CREATE TABLE IF NOT EXISTS " +

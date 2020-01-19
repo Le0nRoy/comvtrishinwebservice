@@ -44,10 +44,5 @@ public class Main {
 
 //        Servlet servlet = new Servlet();
 //        servlet.startServer();
-        String str = "/com-vtrishin-webservice-1.0-SNAPSHOT/app";
-        int index = str.indexOf("/");
-        index = str.indexOf("/com", index);
-        String substr = str.substring(index);
-        System.out.println(substr + " " + index);
     }
 }

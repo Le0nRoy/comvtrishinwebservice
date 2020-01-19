@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public abstract class BaseTable  extends Logger implements Closeable {
+public abstract class BaseTable  extends Logger implements Closeable, TableOperations {
 
     @Override
     public void close() {
@@ -84,6 +84,5 @@ public abstract class BaseTable  extends Logger implements Closeable {
         return DriverManager.getConnection(pathToDaatabase,
                 usernameDatabase, passwordDatabase);
     }
-    protected abstract void createTable() throws SQLException;
     protected abstract void createForeignKeys() throws SQLException;
 }
