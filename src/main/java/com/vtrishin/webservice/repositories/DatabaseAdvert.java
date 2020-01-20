@@ -1,8 +1,10 @@
 package com.vtrishin.webservice.repositories;
 
+import com.vtrishin.webservice.models.Advert;
 import com.vtrishin.webservice.models.BaseModel;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class DatabaseAdvert extends BaseTable {
@@ -76,7 +78,8 @@ public final class DatabaseAdvert extends BaseTable {
 //        }
 //        logger.info(message);
 //        return advert;
-        return null;
+//        return null;
+        return new Advert(0, 1, "Refrigirator", "Kitchen", "88005553535");
     }
     @Override
     public List<BaseModel> getAll(long id) throws SQLException {
@@ -100,7 +103,11 @@ public final class DatabaseAdvert extends BaseTable {
 //        }
 //        logger.info(message);
 //        return adverts;
-        return null;
+        List<BaseModel> adverts = new ArrayList<BaseModel>();
+        adverts.add(new Advert(0, 1, "Refrigirator", "Kitchen", "88005553535"));
+        adverts.add(new Advert(1, 1, "Shower", "Bathroom", "88"));
+
+        return adverts;
     }
     @Override
     public void createTable() throws SQLException {

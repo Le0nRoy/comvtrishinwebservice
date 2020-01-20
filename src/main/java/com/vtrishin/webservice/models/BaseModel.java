@@ -1,5 +1,7 @@
 package com.vtrishin.webservice.models;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Objects;
 
 // Базовый класс модели, имеющий ключ id
@@ -42,6 +44,7 @@ public class BaseModel {
     // FIXME different for Users and Adverts
     protected String commandCreateTable;
     private static long maxId = 0;
+    @Expose
     private long id;
 
 

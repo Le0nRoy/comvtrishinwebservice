@@ -33,16 +33,18 @@ package com.vtrishin.webservice;
 //
 //        REST API данного сервиса должно быть задокументировано
 
+import com.vtrishin.webservice.models.BaseModel;
+import com.vtrishin.webservice.models.User;
+import com.vtrishin.webservice.repositories.DatabaseAdvert;
+import com.vtrishin.webservice.repositories.DatabaseUser;
+import com.vtrishin.webservice.repositories.TableOperations;
 import com.vtrishin.webservice.service.Servlet;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // 1.1 Организовать работу в tomcat-е
-        // 2. Создать класс для пользователя
-        // 2.1. Добавить команду для возврата информации о пользователе по ид
-        //   Нужно хранить мап с id и email пользователей
-
-//        Servlet servlet = new Servlet();
-//        servlet.startServer();
     }
 }

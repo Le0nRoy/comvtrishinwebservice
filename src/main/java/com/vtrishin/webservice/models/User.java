@@ -1,5 +1,7 @@
 package com.vtrishin.webservice.models;
 
+import com.google.gson.annotations.Expose;
+
 public class User extends BaseModel {
 
     public User(int userId, String name, String secondName, String userEmail, boolean isEntity) {
@@ -34,9 +36,20 @@ public class User extends BaseModel {
         return isEntity;
     }
 
+    @Override
+    public String toString(){
+
+        return "UserId = " + getId() + "\nName = " + name + "\nSecond name = " + secondName +
+                "\nEmail = " + userEmail + "\nEntity = " + isEntity;
+    }
+
+    @Expose
     private String name = "";
+    @Expose
     private String secondName = "";
+    @Expose
     private String userEmail = "";
+    @Expose
     private boolean isEntity = false;
 
 }

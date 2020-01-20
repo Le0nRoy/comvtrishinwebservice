@@ -20,29 +20,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
                 <configuration>
-<!--                    <webXml>src\main\webapp\WEB-INF\web.xml</webXml>-->
+                    <url>http://localhost:8080/manager/text</url>
+                    <server>TomcatServer</server>
+                    <path>/app</path>
+                    <username>tomcat</username>
+                    <password>tomcat</password>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.tomcat.maven</groupId>-->
-<!--                <artifactId>tomcat7-maven-plugin</artifactId>-->
-<!--                <version>2.2</version>-->
-<!--                <configuration>-->
-<!--                    <port>9000</port>-->
-<!--&lt;!&ndash;                    address – This IP address will be used on all ports&ndash;&gt;-->
-<!--&lt;!&ndash;                    contextFile – The path of the Tomcat context XML file.&ndash;&gt;-->
-<!--&lt;!&ndash;                    hostName – configure host name&ndash;&gt;-->
-<!--&lt;!&ndash;                    httpsPort – The https port to run the Tomcat servlet on.&ndash;&gt;-->
-<!--&lt;!&ndash;                    keystoreFile – Override the default keystoreFile for the HTTPS connector (if enabled)&ndash;&gt;-->
-<!--&lt;!&ndash;                    keystorePass – Override the default keystorePass for the HTTPS connector (if enabled)&ndash;&gt;-->
-<!--&lt;!&ndash;                    mainClass – Main class to use for starting the standalone jar.&ndash;&gt;-->
-<!--&lt;!&ndash;                    systemProperties – List of System properties to pass to the Tomcat Servlet.&ndash;&gt;-->
-<!--&lt;!&ndash;                    port – Custom port number&ndash;&gt;-->
-<!--&lt;!&ndash;                    path – The webapp context path to use for the web application&ndash;&gt;-->
-<!--&lt;!&ndash;                    warFile – The path of the WAR file to deploy.&ndash;&gt;-->
-<!--                </configuration>-->
-<!--            </plugin>-->
         </plugins>
     </build>
 
@@ -89,6 +79,13 @@
             <artifactId>javax.servlet.jsp-api</artifactId>
             <version>2.3.1</version>
             <scope>provided</scope>
+        </dependency>
+
+<!--        JSon-->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.5</version>
         </dependency>
     </dependencies>
 

@@ -1,17 +1,15 @@
 package com.vtrishin.webservice.repositories;
 
-import com.vtrishin.webservice.Logger;
+import com.vtrishin.webservice.ServletLogger;
+import com.vtrishin.webservice.service.Servlet;
 
 import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public abstract class BaseTable  extends Logger implements Closeable, TableOperations {
+public abstract class BaseTable implements Closeable, TableOperations {
 
     @Override
     public void close() {
@@ -20,18 +18,19 @@ public abstract class BaseTable  extends Logger implements Closeable, TableOpera
             if (connection != null && !connection.isClosed())
                 connection.close();
         } catch (SQLException e) {
-            logger.warning("Ошибка закрытия SQL соединения!");
+            logger.log(logger.WARNING, "Ошибка закрытия SQL соединения!");
         }
     }
 
     protected String tableName;
     private Connection connection;
+    private ServletLogger logger = ServletLogger.getInstance();
 
     // TODO how autoincrement works? should I set it myself?
     protected BaseTable(String tableName) throws SQLException {
 
         this.tableName = tableName;
-        this.connection = getConnection();
+//        this.connection = getConnection();
     }
     // TODO need to close connection?
     protected void executeSqlStatement(String sql, String description) throws SQLException {
@@ -41,7 +40,7 @@ public abstract class BaseTable  extends Logger implements Closeable, TableOpera
         statement.execute(sql);
         statement.close();
         if (description != null) {
-            logger.log(INFO, description);
+            logger.log(logger.INFO, description);
         }
     }
 

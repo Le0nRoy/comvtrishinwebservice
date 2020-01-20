@@ -1,8 +1,10 @@
 package com.vtrishin.webservice.repositories;
 
 import com.vtrishin.webservice.models.BaseModel;
+import com.vtrishin.webservice.models.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseUser extends BaseTable {
@@ -76,7 +78,7 @@ public class DatabaseUser extends BaseTable {
 //        }
 //        logger.info(message);
 //        return user;
-        return null;
+        return new User(1, "Vadim", "Trishin", "myemail@email.com", false);
     }
     @Override
     public List<BaseModel> getAll(long id) throws SQLException {
@@ -101,7 +103,10 @@ public class DatabaseUser extends BaseTable {
 //        }
 //        logger.info(message);
 //        return users;
-        return null;
+        List<BaseModel> users = new ArrayList<BaseModel>();
+        users.add(new User(1, "Vadim", "Trishin", "myemail@email.com", false));
+        users.add(new User(2, "Maria", "Kenny", "notmyemail@email.ru", true));
+        return users;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.vtrishin.webservice.models;
 
+import com.google.gson.annotations.Expose;
+
 import java.time.LocalDate;
 
 public class Advert extends BaseModel {
@@ -42,20 +44,25 @@ public class Advert extends BaseModel {
         return creationDate;
     }
 
+
+    @Expose
     private int personId = 0;
+    @Expose
     private String header = "";
+    @Expose
     private String category = "";
+    @Expose
     private String phoneNumber = "";
+    @Expose
     private final LocalDate creationDate = LocalDate.now();
 
     // TODO do this methods in other classes
-//    @Override
-//    public String toString() {
-//        return "User{" +
-//                "name='" + name + '\'' +
-//                ", password='" + password + '\'' +
-//                '}';
-//    }
+    @Override
+    public String toString(){
+
+        return "AdvertId = " + getId() + "\nUserId = " + personId + "\nHeader = " + header +
+                "\nCategory = " + category + "\nPhone Number = " + phoneNumber + "\nCreation Date = " + creationDate;
+    }
 //
 //    @Override
 //    public boolean equals(Object o) {

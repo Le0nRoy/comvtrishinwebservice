@@ -1,0 +1,136 @@
+{
+	"info": {
+		"_postman_id": "f2661469-04f2-44f8-aaeb-834e964e0c4a",
+		"name": "EpamServletTests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add customer id=1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/app/add?customer=1&name=vadim&secondName=trishin&email=notemail@mail.com&entity=false",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"app",
+						"add"
+					],
+					"query": [
+						{
+							"key": "customer",
+							"value": "1"
+						},
+						{
+							"key": "name",
+							"value": "vadim"
+						},
+						{
+							"key": "secondName",
+							"value": "trishin"
+						},
+						{
+							"key": "email",
+							"value": "notemail@mail.com"
+						},
+						{
+							"key": "entity",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all customers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/app/all-customers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"app",
+						"all-customers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get advert with id=1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/app/customer/1/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"app",
+						"customer",
+						"1",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add advert id=1 customer=1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/app/add?advert=1&customer=1&header=bed&category=furniture&phoneNumber=88005553232",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"app",
+						"add"
+					],
+					"query": [
+						{
+							"key": "advert",
+							"value": "1"
+						},
+						{
+							"key": "customer",
+							"value": "1"
+						},
+						{
+							"key": "header",
+							"value": "bed"
+						},
+						{
+							"key": "category",
+							"value": "furniture"
+						},
+						{
+							"key": "phoneNumber",
+							"value": "88005553232"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
