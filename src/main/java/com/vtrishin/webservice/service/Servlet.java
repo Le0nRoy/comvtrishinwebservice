@@ -3,7 +3,6 @@ package com.vtrishin.webservice.service;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vtrishin.webservice.ServletLogger;
 import com.vtrishin.webservice.models.Advert;
 import com.vtrishin.webservice.models.BaseModel;
 import com.vtrishin.webservice.models.User;
@@ -49,7 +48,6 @@ public class Servlet extends HttpServlet {
         // FIXME исправить под чтение параметров
         String requestURI = request.getRequestURI();
         String[] requestURIs = requestURI.split("/");
-        logger.log(logger.INFO, "Request URI: " + requestURI);
 
         // FIXME еще раз подумать над возрващаемыми ошибками
         // requestURIs[0] - empty
@@ -84,7 +82,7 @@ public class Servlet extends HttpServlet {
                     try {
                         userId = Integer.parseInt(requestURIs[uriNum++]);
                         if (userId < 0 ) {
-                            throw new Exception("Negative id not valid.");
+                            throw new Exception(negativeIdException);
                         }
                     } catch (Exception e) {
                         responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
@@ -120,7 +118,7 @@ public class Servlet extends HttpServlet {
                         try {
                             advertId = Integer.parseInt(advertRequest);
                             if (advertId < 0) {
-                                throw new Exception("Negative id not valid.");
+                                throw new Exception(negativeIdException);
                             }
                         } catch (Exception e) {
                             responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
@@ -194,18 +192,19 @@ public class Servlet extends HttpServlet {
                 paramPair = requestParams[3].split("=");
                 String email = paramPair[1];
                 User user = new User(id, name, secondName, email, isEntity);
+                logger.log(logger.INFO, user.toString());
 
                 try {
-
-                    databaseUser.add(user);
+                    if (!databaseUser.add(user)) {
+                        throw new Exception("Failed to add user!");
+                    }
+                    responseJsonString.append("\nUser with id = ").append(id).
+                            append(" successfully added.");
                 } catch (Exception e) {
                     responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
                     responseJsonString.append("\nUser with id = ").append(id).
                             append(" already exists.");
                 }
-
-                responseJsonString.append("\nUser with id = ").append(id).
-                        append(" successfully added.");
                 break;
             }
             case "advert": {
@@ -295,10 +294,8 @@ public class Servlet extends HttpServlet {
             strError.append("\n");
             strError.append(e.getMessage());
             strError.append("\n");
-            strError.append(Arrays.toString(e.getStackTrace()));
         }
         logger.log(logger.WARNING, strError.toString());
         return strError;
     }
-
 }

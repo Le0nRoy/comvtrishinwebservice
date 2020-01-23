@@ -1,4 +1,4 @@
-package com.vtrishin.webservice;
+package com.vtrishin.webservice.service;
 
 import com.vtrishin.webservice.models.User;
 

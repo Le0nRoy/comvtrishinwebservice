@@ -7,7 +7,7 @@ import java.util.Objects;
 // Базовый класс модели, имеющий ключ id
 public class BaseModel {
 
-    public long getId() {
+    public int getId() {
 
         return id;
     }
@@ -35,7 +35,7 @@ public class BaseModel {
         return Objects.hash(id);
     }
 
-    protected BaseModel(long id) {
+    protected BaseModel(int id) {
 
         this.id = id;
         maxId = id == (maxId + 1) ? id : maxId;
@@ -45,7 +45,7 @@ public class BaseModel {
     protected String commandCreateTable;
     private static long maxId = 0;
     @Expose
-    private long id;
+    private int id;
 
 
 }

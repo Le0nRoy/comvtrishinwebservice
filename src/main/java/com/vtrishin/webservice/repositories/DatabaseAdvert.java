@@ -112,27 +112,25 @@ public final class DatabaseAdvert extends BaseTable {
     @Override
     public void createTable() throws SQLException {
 
-//        try {
-//            super.executeSqlStatement("CREATE TABLE IF NOT EXISTS " +
-//                            tableName + "(" +
-//                            "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
-//                            "personId BIGINT " + //TODO add foreign key
-//                            "header VARCHAR(255) NOT NULL," +
-//                            "category VARCHAR(255) NOT NULL," +
-//                            "phoneNumber VARCHAR(255) NOT NULL," +
-//                            "creationTime TIMESTAMP NOT NULL)",
-//                    "Создана таблица " + tableName);
-//        } catch (SQLException e) {
-//            logger.warning("Failed to create table " + tableName + "!");
-//        }
-    }
-    @Override
-    protected void createForeignKeys() throws SQLException {
-//
-//        // FIXME add foreign key on person
-//        super.executeSqlStatement(" ALTER TABLE" + tableName +
-//                        " ADD FOREIGN KEY (advert) REFERENCES " + ADVERT_TABLE + "(id)",
-//                "Cоздан внешний ключ " + tableName + ".advert -> " + ADVERT_TABLE + ".id");
+        // FIXME may move it to BaseTable and set commands as strings in classes (will be read from BaseModel)
+        //  use reflection for this?
+        try {
+            String createSql = "CREATE TABLE IF NOT EXISTS " +
+                    tableName + "(" +
+                    "id BIGINT PRIMARY KEY NOT NULL," +
+                    "personId BIGINT NOT NULL," +
+                    "header varchar(255) NOT NULL," +
+                    "category varchar(255) NOT NULL," +
+                    "phoneNumber varchar(255) NOT NULL," +
+                    "creationDate timestamp NOT NULL)";
+            executeSqlStatement(createSql);
+
+            executeSqlStatement(" ALTER TABLE " + tableName +
+                    " ADD FOREIGN KEY (personId) REFERENCES " + USER_TABLE + " (id)");
+        } catch (SQLException e) {
+            logger.log(logger.WARNING, "Failed to create table " + tableName + "!");
+            logger.log(logger.WARNING, e.getMessage());
+        }
     }
 
 }

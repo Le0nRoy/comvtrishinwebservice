@@ -44,7 +44,6 @@ public class Advert extends BaseModel {
         return creationDate;
     }
 
-
     @Expose
     private int personId = 0;
     @Expose
