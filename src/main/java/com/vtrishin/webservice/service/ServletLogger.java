@@ -5,6 +5,7 @@ import com.vtrishin.webservice.models.User;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// FIXME make synchronized
 public final class ServletLogger {
 
     public java.util.logging.Logger logger = Logger.getLogger(User.class.getName());
@@ -34,7 +35,7 @@ public final class ServletLogger {
     private static ServletLogger instance = null;
 
     private ServletLogger() {
-        // TODO log to file
+        // FIXME log to file
 //        logger.addHandler();
     }
 

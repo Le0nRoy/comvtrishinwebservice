@@ -11,13 +11,6 @@ public class User extends BaseModel {
         this.secondName = secondName;
         this.userEmail = userEmail;
         this.isEntity = isEntity;
-
-        commandCreateTable = "(" +
-                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
-                "name varchar(255) NOT NULL," +
-                "secondName varchar(255) NOT NULL," +
-                "email varchar(255) NOT NULL," +
-                "isEntity boolean NOT NULL)";
     }
     public String getName() {
 
@@ -43,6 +36,14 @@ public class User extends BaseModel {
                 "\nEmail = " + userEmail + "\nEntity = " + isEntity;
     }
 
+    static {
+        commandCreateTable = "(" +
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "name varchar(255) NOT NULL," +
+                "secondName varchar(255) NOT NULL," +
+                "email varchar(255) NOT NULL," +
+                "isEntity boolean NOT NULL)";
+    }
     @Expose
     private String name = "";
     @Expose

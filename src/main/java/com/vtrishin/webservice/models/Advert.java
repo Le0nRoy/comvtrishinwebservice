@@ -1,12 +1,17 @@
 package com.vtrishin.webservice.models;
 
 import com.google.gson.annotations.Expose;
-
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Advert extends BaseModel {
 
-    // TODO maybe change personId to User and get id from there
+    // FIXME maybe change personId to User and get id from there
+    /**
+     * Fill model for advert
+     * FIXME add enum for categories
+     * @param category
+     */
     public Advert(int advertId, int personId, String header, String category, String phoneNumber) {
 
         super(advertId);
@@ -14,14 +19,6 @@ public class Advert extends BaseModel {
         this.header = header;
         this.category = category;
         this.phoneNumber = phoneNumber;
-
-        commandCreateTable = "(" +
-                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
-                "personId BIGINT " + //TODO add foreign key
-                "header VARCHAR(255) NOT NULL," +
-                "category VARCHAR(255) NOT NULL," +
-                "phoneNumber VARCHAR(255) NOT NULL," +
-                "creationTime TIMESTAMP NOT NULL)";
     }
     public int getPersonId() {
 
@@ -39,11 +36,27 @@ public class Advert extends BaseModel {
 
         return phoneNumber;
     }
-    public LocalDate getCreationDate() {
+    public LocalDateTime getCreationDate() {
 
         return creationDate;
     }
+    @Override
+    public String toString(){
 
+        return "AdvertId = " + getId() + "\nUserId = " + personId + "\nHeader = " + header +
+                "\nCategory = " + category + "\nPhone Number = " + phoneNumber + "\nCreation Date = " + creationDate;
+    }
+
+    static {
+        commandCreateTable = "(" +
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "personId BIGINT " +
+                "header VARCHAR(255) NOT NULL," +
+                "category VARCHAR(255) NOT NULL," +
+                "phoneNumber VARCHAR(255) NOT NULL," +
+                "creationTime TIMESTAMP NOT NULL)";
+//        commandAddForeignKey =
+    }
     @Expose
     private int personId = 0;
     @Expose
@@ -53,16 +66,8 @@ public class Advert extends BaseModel {
     @Expose
     private String phoneNumber = "";
     @Expose
-    private final LocalDate creationDate = LocalDate.now();
+    private final LocalDateTime creationDate = LocalDateTime.now();
 
-    // TODO do this methods in other classes
-    @Override
-    public String toString(){
-
-        return "AdvertId = " + getId() + "\nUserId = " + personId + "\nHeader = " + header +
-                "\nCategory = " + category + "\nPhone Number = " + phoneNumber + "\nCreation Date = " + creationDate;
-    }
-//
 //    @Override
 //    public boolean equals(Object o) {
 //        if (this == o) return true;

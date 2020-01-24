@@ -3,7 +3,7 @@ package com.vtrishin.webservice.repositories;
 import com.vtrishin.webservice.models.Advert;
 import com.vtrishin.webservice.models.BaseModel;
 
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,29 +14,36 @@ public final class DatabaseAdvert extends BaseTable {
         super(ADVERT_TABLE);
     }
     @Override
-    public boolean add(BaseModel model) throws SQLException {
-//
-//        String message;
-//        if (model == null || model.getClass() == Advert.class) {
-//            message = "Wrong class or null given as parameter.";
-//            logger.warning(message);
-//            return false;
+    public void add(BaseModel model) throws SQLException {
+
+        reopenConnection();
+        if (!(model instanceof Advert)) {
+            logger.log(logger.WARNING, "Wrong class or null given as parameter.");
+            throw new SQLException("Wrong instance of object.");
+        }
+        Advert advert = (Advert) model;
+
+        PreparedStatement pstmt = connection.prepareStatement(WRITE_OBJECT_SQL);
+        pstmt.setInt(1, advert.getId());
+        pstmt.setInt(2, advert.getPersonId());
+        pstmt.setString(3, advert.getHeader());
+        pstmt.setString(4, advert.getCategory());
+        pstmt.setString(5, advert.getPhoneNumber());
+        pstmt.setTimestamp(6, Timestamp.valueOf(advert.getCreationDate()));
+        pstmt.executeUpdate();
+
+        // FIXME uncomment when manage how to auto_increment
+//        ResultSet rs = pstmt.getGeneratedKeys();
+//        int id = -1;
+//        if (rs.next()) {
+//            id = rs.getInt(1);
 //        }
-//
-//        try {
-//            // TODO make check by id before adding
-//            executeSqlStatement();
-//            message = "";
-//        } catch (SQLException e) {
-//            message = "Failed to add " + model.getClass().toString().toLowerCase() + " to database.\n" + e.getMessage();
-//            logger.warning(message);
-//            return false;
-//        }
-//        logger.info(message);
-        return true;
+//        rs.close();
+        pstmt.close();
+        super.close();
     }
     @Override
-    public boolean remove(long id) throws SQLException {
+    public void remove(long id) throws SQLException {
 //
 //        String message;
 //        if (id > BaseModel.getMaxId()) {
@@ -54,10 +61,9 @@ public final class DatabaseAdvert extends BaseTable {
 //            return false;
 //        }
 //        logger.info(message);
-        return true;
     }
     @Override
-    public BaseModel find(long id, long userId) throws SQLException {
+    public BaseModel find(int id, int userId) throws SQLException {
 
 //        String message;
 //        if (id > BaseModel.getMaxId()) {
@@ -68,7 +74,6 @@ public final class DatabaseAdvert extends BaseTable {
 //
 //        Advert advert;
 //        try {
-//            // TODO make check by id before adding
 //            executeSqlStatement();
 //            message = "";
 //        } catch (SQLException e) {
@@ -82,39 +87,45 @@ public final class DatabaseAdvert extends BaseTable {
         return new Advert(0, 1, "Refrigirator", "Kitchen", "88005553535");
     }
     @Override
-    public List<BaseModel> getAll(long id) throws SQLException {
+    public List<BaseModel> getAll(long usrId) throws SQLException {
 
-//        String message;
-//        if (id > BaseModel.getMaxId()) {
-//            message = "No person with id = " + id + " in database.";
-//            logger.warning(message);
-//            return null;
-//        }
-//
-//        List<Advert> adverts;
-//        try {
-//            // TODO make check by id before adding
-//            executeSqlStatement();
-//            message = "";
-//        } catch (SQLException e) {
-//            message = "Failed to find element with id " + id + " in database.\n" + e.getMessage();
-//            logger.warning(message);
-//            return null;
-//        }
-//        logger.info(message);
-//        return adverts;
+        reopenConnection();
+        Statement statement = null;
+        ResultSet rs = null;
         List<BaseModel> adverts = new ArrayList<BaseModel>();
-        adverts.add(new Advert(0, 1, "Refrigirator", "Kitchen", "88005553535"));
-        adverts.add(new Advert(1, 1, "Shower", "Bathroom", "88"));
+        String getAllStmnt = "select * from " + tableName + " where personId = " + usrId + ";";
 
+        statement = connection.createStatement();
+        rs = statement.executeQuery(getAllStmnt);
+        if (rs.wasNull()) {
+            throw new SQLException("Failed to get " + tableName + " from database.");
+        }
+
+        while (rs.next()) {
+            // FIXME may be remake with reflection in loop
+//            int id = rs.getInt("id");
+            int id = 1;
+            int personId = rs.getInt("personId");
+            String header = rs.getString("header");
+            String category = rs.getString("category");
+            String phoneNumber = rs.getString("phoneNumber");
+            Timestamp creationDate = rs.getTimestamp("creationDate");
+            adverts.add(new Advert(id, personId, header, category, phoneNumber));
+            logger.log(logger.INFO, creationDate.toString());
+        }
+        rs.close();
+        statement.close();
+        close();
         return adverts;
+//        List<BaseModel> adverts = new ArrayList<BaseModel>();
+//        adverts.add(new Advert(0, 1, "Refrigirator", "Kitchen", "88005553535"));
+//        adverts.add(new Advert(1, 1, "Shower", "Bathroom", "88"));
+//
+//        return adverts;
     }
     @Override
     public void createTable() throws SQLException {
 
-        // FIXME may move it to BaseTable and set commands as strings in classes (will be read from BaseModel)
-        //  use reflection for this?
-        try {
             String createSql = "CREATE TABLE IF NOT EXISTS " +
                     tableName + "(" +
                     "id BIGINT PRIMARY KEY NOT NULL," +
@@ -127,10 +138,15 @@ public final class DatabaseAdvert extends BaseTable {
 
             executeSqlStatement(" ALTER TABLE " + tableName +
                     " ADD FOREIGN KEY (personId) REFERENCES " + USER_TABLE + " (id)");
-        } catch (SQLException e) {
-            logger.log(logger.WARNING, "Failed to create table " + tableName + "!");
-            logger.log(logger.WARNING, e.getMessage());
-        }
     }
 
+    // FIXME make static
+    private String WRITE_OBJECT_SQL = "INSERT INTO " + tableName +
+            "(id, " +
+            "personId, " +
+            "header, " +
+            "category, " +
+            "phoneNumber, " +
+            "creationDate" +
+            ") VALUES (?, ?, ?, ?, ?, ?)";
 }

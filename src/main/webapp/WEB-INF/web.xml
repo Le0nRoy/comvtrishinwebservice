@@ -10,7 +10,7 @@
         <servlet-class>com.vtrishin.webservice.service.Servlet</servlet-class>
     </servlet>
     <servlet-mapping>
-<!--        TODO Как правильно сделать маппинг, чтобы после url-pattern можно было дописывать еще параметры-->
+<!--        FIXME map it correctly to /app (after correcting servlet methods)-->
         <servlet-name>app</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>

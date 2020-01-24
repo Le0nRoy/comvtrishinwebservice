@@ -22,14 +22,21 @@ import java.util.List;
 
 import static java.net.HttpURLConnection.*;
 
+/**
+ * JSON type
+ * {
+ *     "method": "methodName",
+ *     "param": "paramValue"
+ * }
+ * TODO create enum for this
+ * methodName is oe of: remove, add, getAll, find
+ */
 public class Servlet extends HttpServlet {
 
     /**
-     *
-     * @param request
-     *  /all-customers
-     *  /customer/id/adverts
-     *  /customer/id/adId
+     * @param request  /all-customers
+     *                 /customer/id/adverts
+     *                 /customer/id/adId
      * @param response
      * @throws ServletException
      * @throws IOException
@@ -67,12 +74,16 @@ public class Servlet extends HttpServlet {
                         if (users.size() < 1) {
                             throw new Exception("No users in database.\n");
                         }
-                        if (!(users.get(0) instanceof User)){
+                        if (!(users.get(0) instanceof User)) {
                             throw new Exception("Wrong type returned.\n");
                         }
                         responseJsonString.append(gson.toJson(users));
                     } catch (Exception e) {
                         responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
+                        if (e instanceof SQLException) {
+                            logger.log(logger.WARNING,
+                                    "All-customers: got SQLException: " + e.getMessage());
+                        }
                         break;
                     }
                     break;
@@ -81,7 +92,7 @@ public class Servlet extends HttpServlet {
                     int userId = -1;
                     try {
                         userId = Integer.parseInt(requestURIs[uriNum++]);
-                        if (userId < 0 ) {
+                        if (userId < 0) {
                             throw new Exception(negativeIdException);
                         }
                     } catch (Exception e) {
@@ -163,12 +174,11 @@ public class Servlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         response.setCharacterEncoding("UTF-8");
         StringBuffer responseJsonString = new StringBuffer();
-
+        // FIXME change for JSON reading
         String[] requestParams = request.getQueryString().split("&");
-        logger.log(logger.INFO, "Params: " + request.getQueryString());
 
         String[] paramPair = requestParams[0].split("=");
-        switch(paramPair[0]) {
+        switch (paramPair[0]) {
             case "customer": {
                 int id = -1;
                 boolean isEntity = false;
@@ -185,6 +195,7 @@ public class Servlet extends HttpServlet {
                 }
 
                 // FIXME add checks of parameter names
+                // FIXME make it in cycle
                 paramPair = requestParams[1].split("=");
                 String name = paramPair[1];
                 paramPair = requestParams[2].split("=");
@@ -192,18 +203,15 @@ public class Servlet extends HttpServlet {
                 paramPair = requestParams[3].split("=");
                 String email = paramPair[1];
                 User user = new User(id, name, secondName, email, isEntity);
-                logger.log(logger.INFO, user.toString());
 
                 try {
-                    if (!databaseUser.add(user)) {
-                        throw new Exception("Failed to add user!");
-                    }
+                    databaseUser.add(user);
                     responseJsonString.append("\nUser with id = ").append(id).
                             append(" successfully added.");
                 } catch (Exception e) {
                     responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
                     responseJsonString.append("\nUser with id = ").append(id).
-                            append(" already exists.");
+                            append(" already exists.").append(e.getMessage());
                 }
                 break;
             }
@@ -232,17 +240,13 @@ public class Servlet extends HttpServlet {
 
                 try {
 
-                    databaseUser.add(advert);
+                    databaseAdvert.add(advert);
                 } catch (Exception e) {
                     responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
                     responseJsonString.append("\nAdvert with id = ").append(id).
-                            append(" already exists.");
+                            append(" failed to be added.");
                     responseJsonString.append("\nUser id = ").append(userId);
                 }
-
-                responseJsonString.append("\nAdvert with id = ").append(id).
-                        append(" successfully added.");
-                responseJsonString.append("\nUser id = ").append(userId);
                 break;
             }
             default: {
@@ -298,4 +302,5 @@ public class Servlet extends HttpServlet {
         logger.log(logger.WARNING, strError.toString());
         return strError;
     }
+
 }

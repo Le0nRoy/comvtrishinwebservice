@@ -27,12 +27,7 @@ public abstract class BaseTable implements Closeable, TableOperations {
         }
     }
 
-    protected String tableName;
-    protected Connection connection;
-    protected ServletLogger logger = ServletLogger.getInstance();
-
-    // TODO can i do auto_increment? returns error
-    // TODO how autoincrement works? should I set it myself? Serial/Sequent
+    // FIXME Maybe must set Serial/Sequent for autoincrement
     /**
      * Sets table name, inits connection and creates table with tableName if such not exists.
      * @param tableName - name of the table
@@ -75,7 +70,7 @@ public abstract class BaseTable implements Closeable, TableOperations {
      */
     protected Connection getConnection() throws SQLException {
 
-        // FIXME reading properties and getting class must be in own methods,
+        // TODO reading properties and getting class must be in own methods,
         //  that not connected each time by recopenConnection
         Properties properties = new Properties();
         // FIXME here must be return
@@ -99,4 +94,11 @@ public abstract class BaseTable implements Closeable, TableOperations {
         }
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
+
+    // TODO may move here createTable and just fill command here?
+    //  use reflection for generalizing this?
+
+    protected String tableName;
+    protected Connection connection;
+    protected ServletLogger logger = ServletLogger.getInstance();
 }
