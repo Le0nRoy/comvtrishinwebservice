@@ -9,30 +9,39 @@ import com.vtrishin.webservice.models.User;
 import com.vtrishin.webservice.repositories.DatabaseAdvert;
 import com.vtrishin.webservice.repositories.DatabaseUser;
 import com.vtrishin.webservice.repositories.TableOperations;
+import org.json.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static java.net.HttpURLConnection.*;
 
 /**
  * JSON type
  * {
- *     "method": "methodName",
- *     "param": "paramValue"
+ * "method": "methodName",
+ * "param": "paramValue"
  * }
  * TODO create enum for this
  * methodName is oe of: remove, add, getAll, find
  */
 public class Servlet extends HttpServlet {
 
+    final String advertQuery = "advert";
+    final String userQuery = "user";
+    final String objNameParamQuery = "objName";
+    final String idParamQuery = "id";
+    final String userIdParamQuery = "userId";
     /**
      * @param request  /all-customers
      *                 /customer/id/adverts
@@ -51,25 +60,34 @@ public class Servlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         StringBuffer responseJsonString = new StringBuffer();
+        String[] requestParams = request.getQueryString().split("&");
+        String[] paramPair = requestParams[0].split("=");
+        Map<String, String> query_pairs = new LinkedHashMap<>();
+        for (String pair : requestParams) {
+            int idx = pair.indexOf("=");
+            query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
+                    URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+        }
 
-        // FIXME исправить под чтение параметров
-        String requestURI = request.getRequestURI();
-        String[] requestURIs = requestURI.split("/");
+        String objNameString = query_pairs.get(objNameParamQuery);
+        String userIdString = null;
+        String idString = null;
+        if (objNameString.equals(advertQuery) &&
+                query_pairs.containsKey(userIdParamQuery)) {
+            userIdString = query_pairs.get(userIdParamQuery);
+        }
+        if (query_pairs.containsKey(idParamQuery)) {
+            idString = query_pairs.get(idParamQuery);
+        }
 
-        // FIXME еще раз подумать над возрващаемыми ошибками
-        // requestURIs[0] - empty
-        // requestURIs[1] - name of servlet
-        int uriNum = 2;
-        if (requestURIs.length < uriNum + 1) {
-            responseJsonString.append(getError(HTTP_NOT_FOUND, null));
-        } else {
-            switch (requestURIs[uriNum++]) {
-                case "all-customers": {
+        switch (objNameString) {
+            case userQuery: {
+                if (idString == null) {
                     logger.log(logger.INFO, "All users list was requested.");
                     try {
                         List<BaseModel> users = databaseUser.getAll(-1);
                         if (users == null) {
-                            throw new Exception("Returned null as list of users..\n");
+                            throw new Exception("Returned null as list of users.\n");
                         }
                         if (users.size() < 1) {
                             throw new Exception("No users in database.\n");
@@ -82,28 +100,26 @@ public class Servlet extends HttpServlet {
                         responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
                         if (e instanceof SQLException) {
                             logger.log(logger.WARNING,
-                                    "All-customers: got SQLException: " + e.getMessage());
+                                    "All users: got SQLException: " + e.getMessage());
                         }
                         break;
                     }
-                    break;
-                }
-                case "customer": {
-                    int userId = -1;
+                } else {
+                    int id = -1;
                     try {
-                        userId = Integer.parseInt(requestURIs[uriNum++]);
-                        if (userId < 0) {
+                        id = Integer.parseInt(idString);
+                        if (id < 0) {
                             throw new Exception(negativeIdException);
                         }
                     } catch (Exception e) {
                         responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
                         break;
                     }
-                    logger.log(logger.INFO, "User with id = " + userId + " was requested.");
+                    logger.log(logger.INFO, "User with id = " + id + " was requested.");
 
                     User user = null;
                     try {
-                        user = (User) databaseUser.find(userId, -1);
+                        user = (User) databaseUser.find(id, -1);
                     } catch (Exception e) {
                         responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
                         break;
@@ -111,58 +127,85 @@ public class Servlet extends HttpServlet {
                     if (user == null) {
                         responseJsonString.append(getError(HTTP_BAD_REQUEST, null));
                         responseJsonString.append("Returned null as user.");
+                    } else {
+                        responseJsonString.append(gson.toJson(user));
+                    }
+                    break;
+                }
+                break;
+            }
+            case advertQuery: {
+                int userId = -1;
+                try {
+                    userId = Integer.parseInt(userIdString);
+                    if (userId < 0) {
+                        throw new Exception(negativeIdException);
+                    }
+                } catch (Exception e) {
+                    responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
+                    break;
+                }
+
+                User user = null;
+                try {
+                    user = (User) databaseUser.find(userId, -1);
+                } catch (Exception e) {
+                    responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
+                    break;
+                }
+                if (user == null) {
+                    responseJsonString.append(getError(HTTP_BAD_REQUEST, null));
+                    responseJsonString.append("Returned null as user.");
+                }
+
+                if (idString == null) {
+                    logger.log(logger.INFO, "All adverts list for user with id = " +
+                            userId + " was requested.");
+                    try {
+                        responseJsonString.append(gson.toJson(databaseAdvert.getAll(userId)));
+                    } catch (Exception e) {
+                        responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
                         break;
                     }
-
-                    String advertRequest = requestURIs[uriNum];
-                    if (advertRequest.equals("adverts")) {
-                        logger.log(logger.INFO, "All adverts list was requested.");
-                        try {
-                            responseJsonString.append(gson.toJson(databaseAdvert.getAll(userId)));
-                        } catch (Exception e) {
-                            responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
-                            break;
+                } else {
+                    int advertId = -1;
+                    try {
+                        advertId = Integer.parseInt(idString);
+                        if (advertId < 0) {
+                            throw new Exception(negativeIdException);
                         }
-                    } else {
-                        int advertId = -1;
-
-                        try {
-                            advertId = Integer.parseInt(advertRequest);
-                            if (advertId < 0) {
-                                throw new Exception(negativeIdException);
-                            }
-                        } catch (Exception e) {
-                            responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
-                            break;
-                        }
-                        logger.log(logger.INFO, "Advert with id = " + advertId + " was requested.");
-
-                        BaseModel advert = null;
-                        try {
-                            advert = databaseAdvert.find(advertId, userId);
-                            if (advert != null) {
-                                responseJsonString.append(gson.toJson(advert));
-                            } else {
-                                throw new Exception("Returned null as user.");
-                            }
-                        } catch (Exception e) {
-                            responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
-                            break;
-                        }
+                    } catch (Exception e) {
+                        responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
+                        break;
                     }
-                    break;
+                    logger.log(logger.INFO, "Advert with id = " + advertId + " for user with id = " +
+                                    userId + " was requested.");
+
+                    Advert advert = null;
+                    try {
+                        advert = (Advert) databaseAdvert.find(advertId, userId);
+                        if (advert != null) {
+                            responseJsonString.append(gson.toJson(advert));
+                        } else {
+                            throw new Exception("Returned null as advert.");
+                        }
+                    } catch (Exception e) {
+                        responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
+                        break;
+                    }
                 }
-                default: {
-                    responseJsonString.append(getError(HTTP_NOT_FOUND, null));
-                    break;
-                }
+                break;
+            }
+            default: {
+                responseJsonString.append(getError(HTTP_NOT_FOUND, null));
+                break;
             }
         }
 
         if (!responseJsonString.toString().contains("[ERROR]")) {
-
             response.setContentType("application/json");
         }
+
         out.println(responseJsonString);
         out.flush();
         out.close();
@@ -177,6 +220,28 @@ public class Servlet extends HttpServlet {
         // FIXME change for JSON reading
         String[] requestParams = request.getQueryString().split("&");
 
+//        ////////
+//        StringBuffer jb = new StringBuffer();
+//        String line = null;
+//        try {
+//            BufferedReader reader = request.getReader();
+//            while ((line = reader.readLine()) != null) {
+//                jb.append(line);
+//            }
+//        } catch (Exception e) { /*report an error*/ }
+//
+//        try {
+//            JSONObject jsonObject =  HTTP.toJSONObject(jb.toString());
+//        } catch (JSONException e) {
+//            // crash and burn
+//            throw new IOException("Error parsing JSON request string");
+//        }
+//
+//        User usr;
+//        Gson gson = new Gson();
+//        usr = gson.fromJson(jb.toString(), User.class);
+//        logger.log(logger.INFO, "User from JSON " + usr);
+//        /////////////
         String[] paramPair = requestParams[0].split("=");
         switch (paramPair[0]) {
             case "customer": {
