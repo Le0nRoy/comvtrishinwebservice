@@ -4,6 +4,7 @@ import com.vtrishin.webservice.models.Advert;
 import com.vtrishin.webservice.models.BaseModel;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +85,8 @@ public final class DatabaseAdvert extends BaseTable {
 //        logger.info(message);
 //        return advert;
 //        return null;
-        return new Advert(0, 1, "Refrigirator", "Kitchen", "88005553535");
+        return new Advert(0, 1, "Refrigirator", "Kitchen",
+                "88005553535", LocalDateTime.now());
     }
     @Override
     public List<BaseModel> getAll(long usrId) throws SQLException {
@@ -92,7 +94,7 @@ public final class DatabaseAdvert extends BaseTable {
         reopenConnection();
         Statement statement = null;
         ResultSet rs = null;
-        List<BaseModel> adverts = new ArrayList<BaseModel>();
+        List<BaseModel> adverts = new ArrayList<>();
         String getAllStmnt = "select * from " + tableName + " where personId = " + usrId + ";";
 
         statement = connection.createStatement();
@@ -110,18 +112,13 @@ public final class DatabaseAdvert extends BaseTable {
             String category = rs.getString("category");
             String phoneNumber = rs.getString("phoneNumber");
             Timestamp creationDate = rs.getTimestamp("creationDate");
-            adverts.add(new Advert(id, personId, header, category, phoneNumber));
+            adverts.add(new Advert(id, personId, header, category, phoneNumber, creationDate.toLocalDateTime()));
             logger.log(logger.INFO, creationDate.toString());
         }
         rs.close();
         statement.close();
         close();
         return adverts;
-//        List<BaseModel> adverts = new ArrayList<BaseModel>();
-//        adverts.add(new Advert(0, 1, "Refrigirator", "Kitchen", "88005553535"));
-//        adverts.add(new Advert(1, 1, "Shower", "Bathroom", "88"));
-//
-//        return adverts;
     }
     @Override
     public void createTable() throws SQLException {

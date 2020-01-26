@@ -65,9 +65,6 @@ public class DatabaseUser extends BaseTable {
     public BaseModel find(int id, int userId) throws SQLException {
 
         reopenConnection();
-        // FIXME Prepared statement
-//        Statement stmt = connection.createStatement();
-//        String sql = "SELECT * from " + tableName + " where id = " + id + ";";
         // FIXME why it doesnt take USERS as parameter?
         String sql = "SELECT * FROM USERS WHERE ID = ?;";
         PreparedStatement pstmt = connection.prepareStatement(sql);

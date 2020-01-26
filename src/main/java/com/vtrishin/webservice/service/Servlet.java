@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.net.HttpURLConnection.*;
@@ -43,10 +44,11 @@ public class Servlet extends HttpServlet {
     final String idParamQuery = "id";
     final String userIdParamQuery = "userId";
     /**
-     * @param request  /all-customers
-     *                 /customer/id/adverts
-     *                 /customer/id/adId
-     * @param response
+     * @param request
+     *  objName: 'user' or 'advert'
+     *  id: id of object in database (if no id, then requested all objects)
+     *  userId: (for advert) userId whose advert is requested
+     * @param response - JSON with requested object or error description.
      * @throws ServletException
      * @throws IOException
      */
@@ -60,8 +62,8 @@ public class Servlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         StringBuffer responseJsonString = new StringBuffer();
+
         String[] requestParams = request.getQueryString().split("&");
-        String[] paramPair = requestParams[0].split("=");
         Map<String, String> query_pairs = new LinkedHashMap<>();
         for (String pair : requestParams) {
             int idx = pair.indexOf("=");
@@ -179,7 +181,7 @@ public class Servlet extends HttpServlet {
                         break;
                     }
                     logger.log(logger.INFO, "Advert with id = " + advertId + " for user with id = " +
-                                    userId + " was requested.");
+                            userId + " was requested.");
 
                     Advert advert = null;
                     try {
@@ -217,106 +219,75 @@ public class Servlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         response.setCharacterEncoding("UTF-8");
         StringBuffer responseJsonString = new StringBuffer();
-        // FIXME change for JSON reading
-        String[] requestParams = request.getQueryString().split("&");
 
-//        ////////
-//        StringBuffer jb = new StringBuffer();
-//        String line = null;
-//        try {
-//            BufferedReader reader = request.getReader();
-//            while ((line = reader.readLine()) != null) {
-//                jb.append(line);
-//            }
-//        } catch (Exception e) { /*report an error*/ }
-//
-//        try {
-//            JSONObject jsonObject =  HTTP.toJSONObject(jb.toString());
-//        } catch (JSONException e) {
-//            // crash and burn
-//            throw new IOException("Error parsing JSON request string");
-//        }
-//
-//        User usr;
-//        Gson gson = new Gson();
-//        usr = gson.fromJson(jb.toString(), User.class);
-//        logger.log(logger.INFO, "User from JSON " + usr);
-//        /////////////
-        String[] paramPair = requestParams[0].split("=");
-        switch (paramPair[0]) {
-            case "customer": {
-                int id = -1;
-                boolean isEntity = false;
-                try {
-                    id = Integer.parseInt(paramPair[1]);
-                    if (id < 0) {
-                        throw new Exception(negativeIdException);
-                    }
-                    paramPair = requestParams[4].split("=");
-                    isEntity = Boolean.getBoolean(paramPair[1]);
-                } catch (Exception e) {
-                    responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
+        StringBuffer jb = new StringBuffer();
+        String line = null;
+        try {
+            BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null) {
+                jb.append(line);
+            }
+        } catch (Exception e) { /*report an error*/ }
+
+        try {
+            JSONObject jsonObject = HTTP.toJSONObject(jb.toString());
+        } catch (JSONException e) {
+            // crash and burn
+            throw new IOException("Error parsing JSON request string");
+        }
+
+        User user = gson.fromJson(jb.toString(), User.class);
+        Advert advert = null;
+        String modelName = userQuery;
+        Gson gson = new Gson();
+        if (user.getName() == null) {
+            advert = gson.fromJson(jb.toString(), Advert.class);
+            modelName = advertQuery;
+            if (advert == null) {
+                modelName = null;
+            }
+        }
+
+        switch (modelName) {
+            case userQuery: {
+                if (user.getId() < 0) {
+                    responseJsonString.append(getError(HTTP_BAD_REQUEST, new Exception(negativeIdException)));
                     break;
                 }
-
-                // FIXME add checks of parameter names
-                // FIXME make it in cycle
-                paramPair = requestParams[1].split("=");
-                String name = paramPair[1];
-                paramPair = requestParams[2].split("=");
-                String secondName = paramPair[1];
-                paramPair = requestParams[3].split("=");
-                String email = paramPair[1];
-                User user = new User(id, name, secondName, email, isEntity);
 
                 try {
                     databaseUser.add(user);
-                    responseJsonString.append("\nUser with id = ").append(id).
+                    responseJsonString.append("\nUser with id = ").append(user.getId()).
                             append(" successfully added.");
                 } catch (Exception e) {
                     responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
-                    responseJsonString.append("\nUser with id = ").append(id).
-                            append(" already exists.").append(e.getMessage());
+                    responseJsonString.append("\nUser with id = ").append(user.getId()).
+                            append(" failed to be added.\n").append(e.getMessage());
                 }
                 break;
             }
-            case "advert": {
-                int id = -1;
-                int userId = -1;
-                try {
-                    id = Integer.parseInt(paramPair[1]);
-                    paramPair = requestParams[1].split("=");
-                    userId = Integer.parseInt(paramPair[1]);
-                    if (id < 0 || userId < 0) {
-                        throw new Exception(negativeIdException);
-                    }
-                } catch (Exception e) {
-                    responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
+            case advertQuery: {
+                if (advert.getId() < 0 || advert.getPersonId() < 0) {
+                    responseJsonString.append(getError(HTTP_BAD_REQUEST, new Exception(negativeIdException)));
                     break;
                 }
-
-                paramPair = requestParams[2].split("=");
-                String header = paramPair[1];
-                paramPair = requestParams[3].split("=");
-                String category = paramPair[1];
-                paramPair = requestParams[4].split("=");
-                String phoneNumber = paramPair[1];
-                Advert advert = new Advert(id, userId, header, category, phoneNumber);
+                advert.setCreationDate(LocalDateTime.now());
 
                 try {
-
                     databaseAdvert.add(advert);
+                    responseJsonString.append("\nAdvert with id = ").append(user.getId()).
+                            append(" successfully added.");
                 } catch (Exception e) {
                     responseJsonString.append(getError(HTTP_BAD_REQUEST, e));
-                    responseJsonString.append("\nAdvert with id = ").append(id).
-                            append(" failed to be added.");
-                    responseJsonString.append("\nUser id = ").append(userId);
+                    responseJsonString.append("\nAdvert with id = ").append(advert.getId()).
+                            append(" failed to be added.\n").append(e.getMessage());
                 }
+                responseJsonString.append("\nUser id = ").append(advert.getPersonId());
                 break;
             }
             default: {
                 responseJsonString.append(getError(HTTP_BAD_REQUEST, null));
-                responseJsonString.append("\nFirst parameter must be 'customer' or 'advert'.");
+                responseJsonString.append("\nWrong data passed to method.");
                 break;
             }
         }
@@ -326,7 +297,34 @@ public class Servlet extends HttpServlet {
         out.close();
     }
 
-    // FIXME put this mistake in all occurrences
+    public void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        PrintWriter out = response.getWriter();
+        response.setCharacterEncoding("UTF-8");
+        StringBuffer responseJsonString = new StringBuffer();
+
+        responseJsonString.append("PUT method not ready yet.");
+
+        out.println(responseJsonString);
+        out.flush();
+        out.close();
+    }
+
+    public void doDelete(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        PrintWriter out = response.getWriter();
+        response.setCharacterEncoding("UTF-8");
+        StringBuffer responseJsonString = new StringBuffer();
+
+        responseJsonString.append("DELETE method not ready yet.");
+
+        out.println(responseJsonString);
+        out.flush();
+        out.close();
+    }
+
     private String negativeIdException = "Id must be positive!";
 
     private ServletLogger logger = ServletLogger.getInstance();

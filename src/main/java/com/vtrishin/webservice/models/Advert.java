@@ -12,13 +12,15 @@ public class Advert extends BaseModel {
      * FIXME add enum for categories
      * @param category
      */
-    public Advert(int advertId, int personId, String header, String category, String phoneNumber) {
+    public Advert(int advertId, int personId, String header, String category,
+                  String phoneNumber, LocalDateTime creationDate) {
 
         super(advertId);
         this.personId = personId;
         this.header = header;
         this.category = category;
         this.phoneNumber = phoneNumber;
+        this.creationDate = creationDate;
     }
     public int getPersonId() {
 
@@ -39,6 +41,9 @@ public class Advert extends BaseModel {
     public LocalDateTime getCreationDate() {
 
         return creationDate;
+    }
+    public void setCreationDate(LocalDateTime creationDate){
+        this.creationDate = creationDate;
     }
     @Override
     public String toString(){
@@ -66,7 +71,7 @@ public class Advert extends BaseModel {
     @Expose
     private String phoneNumber = "";
     @Expose
-    private final LocalDateTime creationDate = LocalDateTime.now();
+    private LocalDateTime creationDate;
 
 //    @Override
 //    public boolean equals(Object o) {
