@@ -90,7 +90,7 @@ public class DatabaseUser extends BaseTable {
         return usr;
     }
     @Override
-    public List<BaseModel> getAll(long id) throws SQLException {
+    public List<BaseModel> getAll(int id) throws SQLException {
 
         reopenConnection();
         Statement statement = null;

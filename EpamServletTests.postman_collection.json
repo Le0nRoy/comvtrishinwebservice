@@ -7,132 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "Add customer id=1 (old)",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"vadim\",\r\n    \"secondName\": \"trishin\",\r\n    \"userEmail\": \"notemail@mail.com\",\r\n    \"isEntity\": false,\r\n    \"id\": 1\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/app/add?customer=1&name=vadim&secondName=trishin&email=notemail@mail.com&entity=false",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"app",
-						"add"
-					],
-					"query": [
-						{
-							"key": "customer",
-							"value": "1"
-						},
-						{
-							"key": "name",
-							"value": "vadim"
-						},
-						{
-							"key": "secondName",
-							"value": "trishin"
-						},
-						{
-							"key": "email",
-							"value": "notemail@mail.com"
-						},
-						{
-							"key": "entity",
-							"value": "false"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add advert id=1 customer=1 (old)",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/app/add?advert=1&customer=1&header=bed&category=furniture&phoneNumber=88005553232",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"app",
-						"add"
-					],
-					"query": [
-						{
-							"key": "advert",
-							"value": "1"
-						},
-						{
-							"key": "customer",
-							"value": "1"
-						},
-						{
-							"key": "header",
-							"value": "bed"
-						},
-						{
-							"key": "category",
-							"value": "furniture"
-						},
-						{
-							"key": "phoneNumber",
-							"value": "88005553232"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Remove customer id=1 (old)",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/app/add?customer=1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"app",
-						"add"
-					],
-					"query": [
-						{
-							"key": "customer",
-							"value": "1"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Get all users",
 			"request": {
 				"method": "GET",
@@ -243,6 +117,71 @@
 							"key": "id",
 							"value": "1"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add user id=1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"shkvar\",\n    \"secondName\": \"noname\",\n    \"userEmail\": \"notl@mail.com\",\n    \"isEntity\": false,\n    \"id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/app/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"app",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add advert id=1 user=1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"personId\": 2,\r\n  \"header\": \"Refrigirator\",\r\n  \"category\": \"Kitchen\",\r\n  \"phoneNumber\": \"88005553535\",\r\n  \"creationDate\": {},\r\n  \"id\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/app/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"app",
+						"add"
 					]
 				}
 			},

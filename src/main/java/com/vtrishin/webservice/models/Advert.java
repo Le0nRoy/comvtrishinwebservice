@@ -1,7 +1,7 @@
 package com.vtrishin.webservice.models;
 
 import com.google.gson.annotations.Expose;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 public class Advert extends BaseModel {
@@ -12,19 +12,19 @@ public class Advert extends BaseModel {
      * FIXME add enum for categories
      * @param category
      */
-    public Advert(int advertId, int personId, String header, String category,
+    public Advert(int advertId, int userId, String header, String category,
                   String phoneNumber, LocalDateTime creationDate) {
 
         super(advertId);
-        this.personId = personId;
+        this.userId = userId;
         this.header = header;
         this.category = category;
         this.phoneNumber = phoneNumber;
         this.creationDate = creationDate;
     }
-    public int getPersonId() {
+    public int getUserId() {
 
-        return this.personId;
+        return this.userId;
     }
     public String getHeader() {
 
@@ -48,7 +48,7 @@ public class Advert extends BaseModel {
     @Override
     public String toString(){
 
-        return "AdvertId = " + getId() + "\nUserId = " + personId + "\nHeader = " + header +
+        return "AdvertId = " + getId() + "\nUserId = " + userId + "\nHeader = " + header +
                 "\nCategory = " + category + "\nPhone Number = " + phoneNumber + "\nCreation Date = " + creationDate;
     }
 
@@ -63,7 +63,7 @@ public class Advert extends BaseModel {
 //        commandAddForeignKey =
     }
     @Expose
-    private int personId = 0;
+    private int userId = 0;
     @Expose
     private String header = "";
     @Expose

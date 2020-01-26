@@ -42,5 +42,5 @@ public interface TableOperations {
      * @return - List with all
      * @throws SQLException
      */
-    List<BaseModel> getAll(long id) throws SQLException;
+    List<BaseModel> getAll(int id) throws SQLException;
 }

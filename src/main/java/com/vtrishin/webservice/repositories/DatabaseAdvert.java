@@ -3,7 +3,10 @@ package com.vtrishin.webservice.repositories;
 import com.vtrishin.webservice.models.Advert;
 import com.vtrishin.webservice.models.BaseModel;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +29,7 @@ public final class DatabaseAdvert extends BaseTable {
 
         PreparedStatement pstmt = connection.prepareStatement(WRITE_OBJECT_SQL);
         pstmt.setInt(1, advert.getId());
-        pstmt.setInt(2, advert.getPersonId());
+        pstmt.setInt(2, advert.getUserId());
         pstmt.setString(3, advert.getHeader());
         pstmt.setString(4, advert.getCategory());
         pstmt.setString(5, advert.getPhoneNumber());
@@ -66,39 +69,40 @@ public final class DatabaseAdvert extends BaseTable {
     @Override
     public BaseModel find(int id, int userId) throws SQLException {
 
-//        String message;
-//        if (id > BaseModel.getMaxId()) {
-//            message = "No element with id = " + id + " in database.";
-//            logger.warning(message);
-//            return null;
-//        }
-//
-//        Advert advert;
-//        try {
-//            executeSqlStatement();
-//            message = "";
-//        } catch (SQLException e) {
-//            message = "Failed to find element with id " + id + " in database.\n" + e.getMessage();
-//            logger.warning(message);
-//            return null;
-//        }
-//        logger.info(message);
-//        return advert;
-//        return null;
-        return new Advert(0, 1, "Refrigirator", "Kitchen",
-                "88005553535", LocalDateTime.now());
+        reopenConnection();
+        // FIXME why it doesnt take ADVERTS as parameter?
+        String sql = "SELECT * FROM ADVERTS WHERE ID = ?;";
+        PreparedStatement pstmt = connection.prepareStatement(sql);
+//        pstmt.setString(1, tableName);
+        pstmt.setInt(1, id);
+        ResultSet rs = pstmt.executeQuery();
+
+        rs.next();
+        logger.log(logger.INFO, String.valueOf(rs.getFetchSize()));
+        logger.log(logger.INFO, rs.getObject(1).getClass().toString());
+
+        int usrId = rs.getInt("personId");
+        String header = rs.getString("header");
+        String category = rs.getString("category");
+        String phoneNumber = rs.getString("phoneNumber");
+        LocalDateTime creationDate = rs.getTimestamp("creationDate").toLocalDateTime();
+        Advert advert = new Advert(id, userId, header, category, phoneNumber, creationDate);
+        logger.log(logger.INFO, advert.toString());
+
+        pstmt.close();
+        super.close();
+        return advert;
     }
     @Override
-    public List<BaseModel> getAll(long usrId) throws SQLException {
+    public List<BaseModel> getAll(int usrId) throws SQLException {
 
         reopenConnection();
-        Statement statement = null;
-        ResultSet rs = null;
         List<BaseModel> adverts = new ArrayList<>();
-        String getAllStmnt = "select * from " + tableName + " where personId = " + usrId + ";";
+        String getAllStmnt = "select * from ADVERTS where personId = ?;";
+        PreparedStatement statement = connection.prepareStatement(getAllStmnt);
+        statement.setInt(1, usrId);
+        ResultSet rs = statement.executeQuery();
 
-        statement = connection.createStatement();
-        rs = statement.executeQuery(getAllStmnt);
         if (rs.wasNull()) {
             throw new SQLException("Failed to get " + tableName + " from database.");
         }
@@ -140,7 +144,7 @@ public final class DatabaseAdvert extends BaseTable {
     // FIXME make static
     private String WRITE_OBJECT_SQL = "INSERT INTO " + tableName +
             "(id, " +
-            "personId, " +
+            "personId, " + // FIXME rewrite as userId
             "header, " +
             "category, " +
             "phoneNumber, " +

@@ -1,31 +1,34 @@
 package com.vtrishin.webservice.service;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.vtrishin.webservice.models.Advert;
 import com.vtrishin.webservice.models.BaseModel;
 import com.vtrishin.webservice.models.User;
 import com.vtrishin.webservice.repositories.DatabaseAdvert;
 import com.vtrishin.webservice.repositories.DatabaseUser;
 import com.vtrishin.webservice.repositories.TableOperations;
+
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import static java.net.HttpURLConnection.*;
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
 /**
  * JSON type
@@ -43,6 +46,8 @@ public class Servlet extends HttpServlet {
     final String objNameParamQuery = "objName";
     final String idParamQuery = "id";
     final String userIdParamQuery = "userId";
+
+    // FIXME rewrite errors
     /**
      * @param request
      *  objName: 'user' or 'advert'
@@ -267,10 +272,11 @@ public class Servlet extends HttpServlet {
                 break;
             }
             case advertQuery: {
-                if (advert.getId() < 0 || advert.getPersonId() < 0) {
+                if (advert.getId() < 0 || advert.getUserId() < 0) {
                     responseJsonString.append(getError(HTTP_BAD_REQUEST, new Exception(negativeIdException)));
                     break;
                 }
+                // FIXME check if user exists
                 advert.setCreationDate(LocalDateTime.now());
 
                 try {
@@ -282,7 +288,7 @@ public class Servlet extends HttpServlet {
                     responseJsonString.append("\nAdvert with id = ").append(advert.getId()).
                             append(" failed to be added.\n").append(e.getMessage());
                 }
-                responseJsonString.append("\nUser id = ").append(advert.getPersonId());
+                responseJsonString.append("\nUser id = ").append(advert.getUserId());
                 break;
             }
             default: {
