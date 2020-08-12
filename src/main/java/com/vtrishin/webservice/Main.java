@@ -49,37 +49,6 @@ import java.util.List;
 import java.util.Properties;
 
 public class Main {
-    public static void main(String[] args) {
-        Properties properties = new Properties();
-        try (InputStream inputStream = BaseTable.class.getClassLoader().getResourceAsStream("config.properties")) {
-            properties.load(inputStream);
-        } catch (IOException e) {
-            System.out.println("Properties file not found {}. " + e);
-        }
-
-        final String URL = properties.getProperty("db.url");
-        final String USER = properties.getProperty("db.user");
-        final String PASSWORD = properties.getProperty("db.password");
-        final String DRIVER_CLASS_NAME = properties.getProperty("db.driver");
-
-        try {
-            Class.forName(DRIVER_CLASS_NAME);
-        } catch (ClassNotFoundException e) {
-            System.out.println("Failed to load driver for database.");
-            e.printStackTrace();
-        }
-
-        String CreateSql = "Create Table IF NOT EXISTS customers(id int primary key, name varchar not null, " +
-                "secondName varchar not null, userEmail varchar not null, isEntity boolean) ";
-        try {
-            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-//            PreparedStatement pstmt = connection.prepareStatement(CreateSql);
-            Statement stmnt = connection.createStatement();
-            stmnt.execute(CreateSql);
-            stmnt.close();
-            connection.close();
-        } catch (SQLException e) {
-            System.out.println("Failed to create table." + e.getMessage());
-        }
+    public void main(String[] args) {
     }
 }
